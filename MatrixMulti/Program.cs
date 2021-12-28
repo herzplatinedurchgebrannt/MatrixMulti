@@ -51,7 +51,6 @@ namespace MatrixMulti
         {
             // PRÜFUNG OB SINGULARITÄT VORLIEGT
 
-
             int ARows = A.GetLength(0);
             int AColumns = A.Length / A.GetLength(0);
 
@@ -69,7 +68,6 @@ namespace MatrixMulti
                 {
                     result[c, r] = A[r, c];
                 }
-                Console.WriteLine();
             }
 
             result[0, 3] = -nSkalar;
@@ -81,27 +79,23 @@ namespace MatrixMulti
         }
 
 
-        public static double[,] translationPoint (double[,] p , double x = 0, double y = 0, double z = 0)
+        public static double[,] getTranslationMatrix (double x = 0, double y = 0, double z = 0)
         {
             // Verschiebung vom Punkt im Raum
-            int pRows = p.GetLength(0);
-            int pColumns = p.Length / p.GetLength(0);
 
             double[,] translationMatrix = { { 1, 0, 0, x },
                                             { 0, 1, 0, y },
                                             { 0, 0, 1, z },
                                             { 0, 0, 0, 1 } };
 
-            double[,] result = multiplyMatrix(translationMatrix, p);
+            //double[,] result = multiplyMatrix(translationMatrix, p);
 
-            return result;
+            return translationMatrix;
         }
 
-        public static double[,] rotationPoint(double[,] p, RotateAxis axis, double angle)
+        public static double[,] getRotationMatrix(RotateAxis axis, double angle)
         {
             // Drehung vom Achse
-            int pRows = p.GetLength(0);
-            int pColumns = p.Length / p.GetLength(0);
 
             double cosO =Math.Round(Math.Cos(angle * Math.PI / 180),3);
             double sinO =Math.Round(Math.Sin(angle * Math.PI / 180),3);
@@ -140,9 +134,9 @@ namespace MatrixMulti
                     break;
             }
 
-            double[,] result = multiplyMatrix(rotationMatrix, p);
+            //double[,] result = multiplyMatrix(rotationMatrix, p);
 
-            return result;
+            return rotationMatrix;
         }
 
         // FUNKTION ZUM SKALIEREN
@@ -151,12 +145,12 @@ namespace MatrixMulti
 
 
 
-        public static void print(double[,] a)
+        public static void print(double[,] A)
         {
-            int arows = a.GetLength(0);
-            int acolumns = a.Length / a.GetLength(0);
+            int arows = A.GetLength(0);
+            int acolumns = A.Length / A.GetLength(0);
 
-            foreach (double d in a)
+            foreach (double d in A)
             {
                 //Console.Write(d + " ");
             }
@@ -165,7 +159,7 @@ namespace MatrixMulti
             {
                 for (int c = 0; c < acolumns; c++)
                 {
-                    Console.Write( a[r, c] + " " );
+                    Console.Write( A[r, c] + " " );
                 }
                 Console.WriteLine();
             }
@@ -186,7 +180,6 @@ namespace MatrixMulti
         public static void Main(string[] args)
         {
 
-
             double[,] A = { { 1, 2, 3 ,3 }, 
                             { 0, 5, 6, 2 }, 
                             { 1, 2, 0, 2 } , 
@@ -206,15 +199,20 @@ namespace MatrixMulti
 
             double[,] c;
 
+            double[,] trans;
+            double[,] rotat;
+
+            double[,] complete;
+
             // result AxB
             //4 20 27 15
             //6 32 56 17
             //1 9 14 9
             //1 13 26 11
 
-            double[,] p = new double [4,1] {{ 7 },
-                                            { 2 },
-                                            { 5 },
+            double[,] p = new double [4,1] {{ 130 },
+                                            { -55 },
+                                            { 120 },
                                             { 1 }};
 
 
@@ -225,7 +223,15 @@ namespace MatrixMulti
 
 
             // EXAMPLES
-            c = Matrix.rotationPoint(p, Matrix.RotateAxis.Z, 90);
+            trans = Matrix.getTranslationMatrix(150, 0, 125);
+            rotat = Matrix.getRotationMatrix(Matrix.RotateAxis.Y, 135);
+
+            complete = Matrix.multiplyMatrix(trans, rotat);
+
+            complete = Matrix.getInverseMatrix(complete);
+
+            c = Matrix.multiplyMatrix(complete, p);
+
             Matrix.print(c);
         }
 
