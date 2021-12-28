@@ -47,6 +47,36 @@ namespace MatrixMulti
             return result;
         }
 
+        public static double[,] getInverseMatrix(double[,] A)
+        {
+            int ARows = A.GetLength(0);
+            int AColumns = A.Length / A.GetLength(0);
+
+            double[,] result = new double[ARows, AColumns];
+
+            // quick + dirty
+            double nSkalar = A[0, 0] * A[0, 3] + A[1, 0] * A[1, 3] + A[2, 0] * A[2, 3];
+            double oSkalar = A[0, 1] * A[0, 3] + A[1, 1] * A[1, 3] + A[2, 1] * A[2, 3];
+            double aSkalar = A[0, 2] * A[0, 3] + A[1, 2] * A[1, 3] + A[2, 2] * A[2, 3];
+
+            for (int r = 0; r < ARows-1; r++)
+            {
+                for (int c = 0; c < AColumns-1; c++)
+                {
+                    result[c, r] = A[r, c];
+                }
+                Console.WriteLine();
+            }
+
+            result[0, 3] = -nSkalar;
+            result[1, 3] = -oSkalar;
+            result[2, 3] = -aSkalar;
+            result[3, 3] = 1;
+
+            return result;
+        }
+
+
         public static double[,] translationPoint (double[,] p , double x = 0, double y = 0, double z = 0)
         {
             int pRows = p.GetLength(0);
@@ -108,6 +138,10 @@ namespace MatrixMulti
 
             return result;
         }
+
+
+
+
 
 
         public static void print(double[,] a)
@@ -178,17 +212,20 @@ namespace MatrixMulti
                                             { 3 },
                                             { 1 }};
 
+
+            double[,] D = { { 1, 0, 0 ,4 },
+                            { 0, 1, 0, 0 },
+                            { 0, 0, 1, 0 } ,
+                            { 0, 0, 0, 1 } };
+
             //c = Matrix.translationPoint(p, 20, 25, 2);
 
             //c = Matrix.multiplyMatrix(A, B);
 
-            c = Matrix.rotationPoint(p, Matrix.RotateAxis.Z, -35);
+            c = Matrix.getInverseMatrix(D);
 
             Matrix.print(c);
 
-            //c = Matrix.multiplyWithVector(a, v);
-
-            //Matrix.print(c);
 
         }
 
