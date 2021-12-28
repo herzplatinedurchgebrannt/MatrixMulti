@@ -142,7 +142,24 @@ namespace MatrixMulti
         // FUNKTION ZUM SKALIEREN
 
 
+        public static double[,] getEulerKUKA (double A, double B, double C)
+        {
+            // A Rotation um Z
+            // B Rotation um Y'
+            // C Rotation um X''
 
+            double[,] result = new double[4,4];
+
+            double[,] RotationA = Matrix.getRotationMatrix(RotateAxis.Z, A);
+            double[,] RotationB = Matrix.getRotationMatrix(RotateAxis.Y, B);
+            double[,] RotationC = Matrix.getRotationMatrix(RotateAxis.X, C);
+
+            result = Matrix.multiplyMatrix(RotationA, RotationB);
+            result = Matrix.multiplyMatrix(result, RotationC);
+        
+
+            return result;
+        }
 
 
         public static void print(double[,] A)
@@ -233,6 +250,12 @@ namespace MatrixMulti
             c = Matrix.multiplyMatrix(complete, p);
 
             Matrix.print(c);
+
+            Console.WriteLine("_----_");
+
+            double[,] g = Matrix.getEulerKUKA(30, 60, 90);
+
+            Matrix.print(g);
         }
 
     }
