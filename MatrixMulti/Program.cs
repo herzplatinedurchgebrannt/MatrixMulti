@@ -49,11 +49,15 @@ namespace MatrixMulti
 
         public static double[,] getInverseMatrix(double[,] A)
         {
+            // PRÜFUNG OB SINGULARITÄT VORLIEGT
+
+
             int ARows = A.GetLength(0);
             int AColumns = A.Length / A.GetLength(0);
 
             double[,] result = new double[ARows, AColumns];
 
+            // SKALAR EIGENE FUNKTION 
             // quick + dirty
             double nSkalar = A[0, 0] * A[0, 3] + A[1, 0] * A[1, 3] + A[2, 0] * A[2, 3];
             double oSkalar = A[0, 1] * A[0, 3] + A[1, 1] * A[1, 3] + A[2, 1] * A[2, 3];
@@ -79,6 +83,7 @@ namespace MatrixMulti
 
         public static double[,] translationPoint (double[,] p , double x = 0, double y = 0, double z = 0)
         {
+            // Verschiebung vom Punkt im Raum
             int pRows = p.GetLength(0);
             int pColumns = p.Length / p.GetLength(0);
 
@@ -94,11 +99,12 @@ namespace MatrixMulti
 
         public static double[,] rotationPoint(double[,] p, RotateAxis axis, double angle)
         {
+            // Drehung vom Achse
             int pRows = p.GetLength(0);
             int pColumns = p.Length / p.GetLength(0);
 
-            double cosO = Math.Cos((angle * Math.PI) / 180);
-            double sinO = Math.Sin((angle * Math.PI) / 180);
+            double cosO =Math.Round(Math.Cos(angle * Math.PI / 180),3);
+            double sinO =Math.Round(Math.Sin(angle * Math.PI / 180),3);
 
             double[,] rotationMatrix = new double[4, 4];
 
@@ -139,6 +145,7 @@ namespace MatrixMulti
             return result;
         }
 
+        // FUNKTION ZUM SKALIEREN
 
 
 
@@ -178,8 +185,6 @@ namespace MatrixMulti
     {
         public static void Main(string[] args)
         {
-            //Console.Write(Math.Cos(Math.PI / 180 * 90));
-
 
 
             double[,] A = { { 1, 2, 3 ,3 }, 
@@ -207,26 +212,21 @@ namespace MatrixMulti
             //1 9 14 9
             //1 13 26 11
 
-            double[,] p = new double [4,1] {{ 1 },
+            double[,] p = new double [4,1] {{ 7 },
                                             { 2 },
-                                            { 3 },
+                                            { 5 },
                                             { 1 }};
 
 
-            double[,] D = { { 1, 0, 0 ,4 },
-                            { 0, 1, 0, 0 },
-                            { 0, 0, 1, 0 } ,
+            double[,] D = { { 1, 0, 0 ,5 },
+                            { 0, 1, 0, 7 },
+                            { 0, 0, 1, -4 } ,
                             { 0, 0, 0, 1 } };
 
-            //c = Matrix.translationPoint(p, 20, 25, 2);
 
-            //c = Matrix.multiplyMatrix(A, B);
-
-            c = Matrix.getInverseMatrix(D);
-
+            // EXAMPLES
+            c = Matrix.rotationPoint(p, Matrix.RotateAxis.Z, 90);
             Matrix.print(c);
-
-
         }
 
     }
