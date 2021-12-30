@@ -69,8 +69,52 @@ namespace MatrixMulti
             int ARows = A.GetLength(0);
             int AColumns = A.Length / A.GetLength(0);
 
+            double[,] sub3x3Matrix1 = new double[3, 3];
+            double[,] sub3x3Matrix2 = new double[3, 3];
+            double[,] sub3x3Matrix3 = new double[3, 3];
+            double[,] sub3x3Matrix4 = new double[3, 3];
+
+            double[,,] test =new double[4, 3, 3];
+
+            double[,] S = new double[3, 3];
 
 
+
+            for (int r = 1; r < ARows; r++)
+            {
+                int h = 0;
+                int j = 0;
+                int k = 0;
+                int l = 0;
+                for (int c = 0; c < AColumns; c++)
+                {
+                    if (c == 0) {}
+                    else { sub3x3Matrix1[r-1, h] = A[r, c]; test[0, r - 1, h] = A[r, c]; h += 1; }
+
+                    if (c == 1) {}
+                    else { sub3x3Matrix2[r-1, j] = A[r, c]; test[1, r - 1, j] = A[r, c]; j += 1; }
+
+                    if (c == 2) {}
+                    else { sub3x3Matrix3[r-1, k] = A[r, c]; test[2, r - 1, k] = A[r, c]; k += 1; }
+
+                    if (c == 3) {}
+                    else { sub3x3Matrix4[r-1, l] = A[r, c]; test[3, r - 1, l] = A[r, c]; l += 1; }
+                }
+            }
+
+            // https://matheguru.com/lineare-algebra/determinante.html
+
+            double resultSubMatrix =   S[0, 0] * S[1, 1] * S[2, 2]
+                                     + S[0, 1] * S[1, 2] * S[2, 0]
+                                     + S[0, 2] * S[1, 0] * S[2, 1]
+                                     - S[0, 2] * S[1, 1] * S[2, 0]
+                                     - S[0, 1] * S[1, 0] * S[2, 2]
+                                     - S[0, 0] * S[1, 2] * S[2, 1];
+
+            for (int i = 0; i < 4; i++)
+            {
+
+            }
 
 
             return true;
@@ -252,6 +296,8 @@ namespace MatrixMulti
                             { 0, 5, 6, 2 }, 
                             { 1, 2, 0, 2 } , 
                             { 1, 4, 0, 2 } };
+
+            Matrix.checkSingularity(A);
 
             double[,] B = { { 1, 1, 0, 1 }, 
                             { 0, 2, 6, 1 }, 
