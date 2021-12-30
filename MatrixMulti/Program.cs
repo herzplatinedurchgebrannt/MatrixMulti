@@ -33,6 +33,14 @@ namespace MatrixMulti
 
             double[,] result = new double[ARows, BColumns];
 
+            if (AColumns != BRows)
+            {
+                Console.WriteLine("Columns of matrix A not equal to rows of matrix B!");
+                Console.WriteLine("Multiplication not possible!");
+                return result;
+            }
+
+
             double sum = 0;
 
             for (int i = 0; i < ARows; i++)
@@ -50,20 +58,59 @@ namespace MatrixMulti
             return result;
         }
 
+        public static double calculateScalarProduct (double [,] vectorA, double [,] vectorB)
+        {
+
+            return 0;
+        }
+
+        public static bool checkSingularity(double[,] A)
+        {
+            int ARows = A.GetLength(0);
+            int AColumns = A.Length / A.GetLength(0);
+
+
+
+
+
+            return true;
+        }
+
         public static double[,] getInverseMatrix(double[,] A)
         {
             // PRÜFUNG OB SINGULARITÄT VORLIEGT
+            // FUNKTION BERECHNUNG DETERMINANTE
 
             int ARows = A.GetLength(0);
             int AColumns = A.Length / A.GetLength(0);
 
             double[,] result = new double[ARows, AColumns];
 
-            // SKALAR EIGENE FUNKTION 
-            // quick + dirty
-            double nSkalar = A[0, 0] * A[0, 3] + A[1, 0] * A[1, 3] + A[2, 0] * A[2, 3];
-            double oSkalar = A[0, 1] * A[0, 3] + A[1, 1] * A[1, 3] + A[2, 1] * A[2, 3];
-            double aSkalar = A[0, 2] * A[0, 3] + A[1, 2] * A[1, 3] + A[2, 2] * A[2, 3];
+            // build n,o,a,p vectors
+            double[,] vectorN = new double[3, 1];
+            double[,] vectorO = new double[3, 1];
+            double[,] vectorA = new double[3, 1];
+            double[,] vectorP = new double[3, 1];
+
+            for (int r = 0; r < ARows-1; r++)
+            {
+                vectorN[r, 0] = A[r, 0];
+                vectorO[r, 0] = A[r, 1];
+                vectorA[r, 0] = A[r, 2];
+                vectorP[r, 0] = A[r, 3];
+            }
+
+            // calculate scalar product
+            double nSkalar = 0;
+            double oSkalar = 0;
+            double aSkalar = 0;
+
+            for (int r = 0; r < ARows-1; r++)
+            {
+                nSkalar += vectorN[r, 0] * vectorP[r, 0];
+                oSkalar += vectorO[r, 0] * vectorP[r, 0];
+                aSkalar += vectorA[r, 0] * vectorP[r, 0];
+            }
 
             for (int r = 0; r < ARows-1; r++)
             {
@@ -91,15 +138,12 @@ namespace MatrixMulti
                                             { 0, 0, 1, z },
                                             { 0, 0, 0, 1 } };
 
-            //double[,] result = multiplyMatrix(translationMatrix, p);
-
             return translationMatrix;
         }
 
         public static double[,] getRotationMatrix(RotationAxis rotationaxis, double angle)
         {
             // Drehung vom Achse
-
             double cosO =Math.Round(Math.Cos(angle * Math.PI / 180),9);
             double sinO =Math.Round(Math.Sin(angle * Math.PI / 180),9);
 
@@ -133,12 +177,8 @@ namespace MatrixMulti
                     break;
 
                 default:
-                    
                     break;
             }
-
-            //double[,] result = multiplyMatrix(rotationMatrix, p);
-
             return rotationMatrix;
         }
 
@@ -162,16 +202,17 @@ namespace MatrixMulti
             switch (rotationorder)
             {
                 case RotationOrder.ZYZ:
+                    // Z  Y' Z''
                     result = Matrix.multiplyMatrix(RotationA, RotationB);
                     result = Matrix.multiplyMatrix(result, RotationA);
                     break;
                 case RotationOrder.ZYX:
+                    // Z  Y' X''
                     result = Matrix.multiplyMatrix(RotationA, RotationB);
                     result = Matrix.multiplyMatrix(result, RotationC);
                     break;
 
                 default:
-
                     break;
             }
 
@@ -216,6 +257,15 @@ namespace MatrixMulti
                             { 0, 2, 6, 1 }, 
                             { 1, 3, 4, 1 }, 
                             { 0, 2, 1, 3 } };
+
+            double[,] E = { { 1, 2, 3 ,3 },
+                            { 0, 5, 6, 2 },
+                            { 1, 2, 0, 2 }};
+
+            double[,] F = { { 1, 1, 0 },
+                            { 0, 2, 6 },
+                            { 1, 3, 4 },
+                            { 0, 2, 1 } };
 
             double[,] vektorTransposed = new double[1,4] {{ 1, 1, 0, 1 }};
 
@@ -271,6 +321,11 @@ namespace MatrixMulti
 
             Matrix.print(g);
 
+            Console.WriteLine("_----_");
+
+            g = Matrix.multiplyMatrix(E, F);
+
+            Matrix.print(g);
         }
 
     }
