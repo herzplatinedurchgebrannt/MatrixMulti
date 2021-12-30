@@ -1,9 +1,6 @@
 ﻿using System;
 
 
-//using System.Collections.Generic;
-//using System.Linq;
-
 namespace MatrixMulti 
 {
     public static class Matrix
@@ -13,11 +10,17 @@ namespace MatrixMulti
 
         }
 
-        public enum RotateAxis
+        public enum RotationAxis
         {
             X,
             Y,
             Z
+        }
+
+        public enum RotationOrder
+        {
+            ZYZ,
+            ZYX
         }
 
         public static double[,] multiplyMatrix(double[,] A, double[,] B)
@@ -93,12 +96,12 @@ namespace MatrixMulti
             return translationMatrix;
         }
 
-        public static double[,] getRotationMatrix(RotateAxis axis, double angle)
+        public static double[,] getRotationMatrix(RotationAxis rotationaxis, double angle)
         {
             // Drehung vom Achse
 
-            double cosO =Math.Round(Math.Cos(angle * Math.PI / 180),3);
-            double sinO =Math.Round(Math.Sin(angle * Math.PI / 180),3);
+            double cosO =Math.Round(Math.Cos(angle * Math.PI / 180),9);
+            double sinO =Math.Round(Math.Sin(angle * Math.PI / 180),9);
 
             double[,] rotationMatrix = new double[4, 4];
 
@@ -117,15 +120,15 @@ namespace MatrixMulti
                                             {  0,     0,     1,     0 },
                                             {  0,     0,     0,     1 } };
 
-            switch (axis)
+            switch (rotationaxis)
             {
-                case RotateAxis.X:
+                case RotationAxis.X:
                     rotationMatrix = rotationMatrixX;
                     break;
-                case RotateAxis.Y:
+                case RotationAxis.Y:
                     rotationMatrix = rotationMatrixY;
                     break;
-                case RotateAxis.Z:
+                case RotationAxis.Z:
                     rotationMatrix = rotationMatrixZ;
                     break;
 
@@ -141,8 +144,10 @@ namespace MatrixMulti
 
         // FUNKTION ZUM SKALIEREN
 
-
-        public static double[,] getEulerKUKA (double A, double B, double C)
+        ///<summary>
+        ///Rotates matrix intrinsic 
+        ///</summary>
+        public static double[,] rotateMatrixIntrinsic (double A, double B, double C, RotationOrder rotationorder = RotationOrder.ZYX)
         {
             // A Rotation um Z
             // B Rotation um Y'
@@ -150,13 +155,25 @@ namespace MatrixMulti
 
             double[,] result = new double[4,4];
 
-            double[,] RotationA = Matrix.getRotationMatrix(RotateAxis.Z, A);
-            double[,] RotationB = Matrix.getRotationMatrix(RotateAxis.Y, B);
-            double[,] RotationC = Matrix.getRotationMatrix(RotateAxis.X, C);
+            double[,] RotationA = Matrix.getRotationMatrix(RotationAxis.Z, A);
+            double[,] RotationB = Matrix.getRotationMatrix(RotationAxis.Y, B);
+            double[,] RotationC = Matrix.getRotationMatrix(RotationAxis.X, C);
 
-            result = Matrix.multiplyMatrix(RotationA, RotationB);
-            result = Matrix.multiplyMatrix(result, RotationC);
-        
+            switch (rotationorder)
+            {
+                case RotationOrder.ZYZ:
+                    result = Matrix.multiplyMatrix(RotationA, RotationB);
+                    result = Matrix.multiplyMatrix(result, RotationA);
+                    break;
+                case RotationOrder.ZYX:
+                    result = Matrix.multiplyMatrix(RotationA, RotationB);
+                    result = Matrix.multiplyMatrix(result, RotationC);
+                    break;
+
+                default:
+
+                    break;
+            }
 
             return result;
         }
@@ -167,11 +184,6 @@ namespace MatrixMulti
             int arows = A.GetLength(0);
             int acolumns = A.Length / A.GetLength(0);
 
-            foreach (double d in A)
-            {
-                //Console.Write(d + " ");
-            }
-
             for (int r = 0; r < arows; r++)
             {
                 for (int c = 0; c < acolumns; c++)
@@ -180,10 +192,8 @@ namespace MatrixMulti
                 }
                 Console.WriteLine();
             }
-
             Console.WriteLine();
         }
-
     }
 
 
@@ -241,7 +251,7 @@ namespace MatrixMulti
 
             // EXAMPLES
             trans = Matrix.getTranslationMatrix(150, 0, 125);
-            rotat = Matrix.getRotationMatrix(Matrix.RotateAxis.Y, 135);
+            rotat = Matrix.getRotationMatrix(Matrix.RotationAxis.Y, 135);
 
             complete = Matrix.multiplyMatrix(trans, rotat);
 
@@ -253,9 +263,14 @@ namespace MatrixMulti
 
             Console.WriteLine("_----_");
 
-            double[,] g = Matrix.getEulerKUKA(30, 60, 90);
+            double[,] g = Matrix.rotateMatrixIntrinsic(65, -40, 30, Matrix.RotationOrder.ZYX);
 
             Matrix.print(g);
+
+            g = Matrix.rotateMatrixIntrinsic(65, -40, 30, Matrix.RotationOrder.ZYZ);
+
+            Matrix.print(g);
+
         }
 
     }
