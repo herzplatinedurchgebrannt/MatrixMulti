@@ -399,8 +399,32 @@ namespace MatrixMulti
             calc = Matrix.axisToAxis(calc, 0, 0, 0, 90);
             Matrix.print(calc);
             calc = Matrix.axisToAxis(calc, 0, 170, 0, 0);
-
             Matrix.print(calc);
+
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+
+
+            double[,] calc2 = { { 1, 0, 0 ,0 },
+                                { 0, 1, 0, 0 },
+                                { 0, 0, 1, 0 },
+                                { 0, 0, 0, 1 } };
+
+            calc2 = Matrix.axisToAxis(calc2, -66.146, 675, 350, -90);
+            Matrix.print(calc2);
+            calc2 = Matrix.axisToAxis(calc2, -18.726, 0, 1150, 0);
+            Matrix.print(calc2);
+            calc2 = Matrix.axisToAxis(calc2, -36.092, 0, -41, -90);
+            Matrix.print(calc2);
+            calc2 = Matrix.axisToAxis(calc2, 178.344, 1200, 0, 90);
+            Matrix.print(calc2);
+            calc2 = Matrix.axisToAxis(calc2, -110.097, 0, 0, -90);
+            Matrix.print(calc2);
+            calc2 = Matrix.axisToAxis(calc2, 62.474, 190, 0, 0);
+            Matrix.print(calc2);
 
         }
 
