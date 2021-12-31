@@ -40,7 +40,6 @@ namespace MatrixMulti
                 return result;
             }
 
-
             double sum = 0;
 
             for (int i = 0; i < ARows; i++)
@@ -60,7 +59,6 @@ namespace MatrixMulti
 
         public static double calculateScalarProduct (double [,] vectorA, double [,] vectorB)
         {
-
             return 0;
         }
 
@@ -77,8 +75,6 @@ namespace MatrixMulti
             double[,,] test =new double[4, 3, 3];
 
             double[,] S = new double[3, 3];
-
-
 
             for (int r = 1; r < ARows; r++)
             {
@@ -115,8 +111,6 @@ namespace MatrixMulti
             {
 
             }
-
-
             return true;
         }
 
@@ -176,7 +170,6 @@ namespace MatrixMulti
         public static double[,] getTranslationMatrix (double x = 0, double y = 0, double z = 0)
         {
             // Verschiebung vom Punkt im Raum
-
             double[,] translationMatrix = { { 1, 0, 0, x },
                                             { 0, 1, 0, y },
                                             { 0, 0, 1, z },
@@ -188,8 +181,8 @@ namespace MatrixMulti
         public static double[,] getRotationMatrix(RotationAxis rotationaxis, double angle)
         {
             // Drehung vom Achse
-            double cosO =Math.Round(Math.Cos(angle * Math.PI / 180),9);
-            double sinO =Math.Round(Math.Sin(angle * Math.PI / 180),9);
+            double cosO = Math.Round(Math.Cos(angle * Math.PI / 180),9);
+            double sinO = Math.Round(Math.Sin(angle * Math.PI / 180),9);
 
             double[,] rotationMatrix = new double[4, 4];
 
@@ -259,8 +252,25 @@ namespace MatrixMulti
                 default:
                     break;
             }
+            return result;
+        }
+
+        public static double[,] axisToAxis( double [,] P, double theta, double d, double a, double alpha)
+        {
+            double[,] result = new double[4, 4];
+
+            double[,] rotTheta = Matrix.getRotationMatrix(RotationAxis.Z, theta);
+            double[,] transD = Matrix.getTranslationMatrix(0, 0, d);
+            double[,] transA = Matrix.getTranslationMatrix(a, 0, 0);
+            double[,] rotAlpha  = Matrix.getRotationMatrix(RotationAxis.X, alpha);
+
+            result = Matrix.multiplyMatrix(P, rotTheta);
+            result = Matrix.multiplyMatrix(result, transD);
+            result = Matrix.multiplyMatrix(result, transA);
+            result = Matrix.multiplyMatrix(result, rotAlpha);
 
             return result;
+
         }
 
 
@@ -355,23 +365,43 @@ namespace MatrixMulti
 
             c = Matrix.multiplyMatrix(complete, p);
 
-            Matrix.print(c);
+            //Matrix.print(c);
 
-            Console.WriteLine("_----_");
+            //Console.WriteLine("_----_");
 
             double[,] g = Matrix.rotateMatrixIntrinsic(65, -40, 30, Matrix.RotationOrder.ZYX);
 
-            Matrix.print(g);
+            //Matrix.print(g);
 
             g = Matrix.rotateMatrixIntrinsic(65, -40, 30, Matrix.RotationOrder.ZYZ);
 
-            Matrix.print(g);
+            //Matrix.print(g);
 
-            Console.WriteLine("_----_");
+            //Console.WriteLine("_----_");
 
             g = Matrix.multiplyMatrix(E, F);
 
-            Matrix.print(g);
+            //Matrix.print(g);
+
+            double[,] calc = { { 1, 0, 0 ,0 },
+                               { 0, 1, 0, 0 },
+                               { 0, 0, 1, 0 },
+                               { 0, 0, 0, 1 } };
+
+            calc = Matrix.axisToAxis(calc, 0, 815, 350, -90);
+            Matrix.print(calc);
+            calc = Matrix.axisToAxis(calc, -90, 0, 850, 0);
+            Matrix.print(calc);
+            calc = Matrix.axisToAxis(calc, 0, 0, 145, -90);
+            Matrix.print(calc);
+            calc = Matrix.axisToAxis(calc, 0, 820, 0, -90);
+            Matrix.print(calc);
+            calc = Matrix.axisToAxis(calc, 0, 0, 0, 90);
+            Matrix.print(calc);
+            calc = Matrix.axisToAxis(calc, 0, 170, 0, 0);
+
+            Matrix.print(calc);
+
         }
 
     }
