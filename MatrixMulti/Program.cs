@@ -426,6 +426,15 @@ namespace MatrixMulti
             calc2 = Matrix.axisToAxis(calc2, 62.474, 190, 0, 0);
             Matrix.print(calc2);
 
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Gelenk Achse 1:");
+
+            double joint1 = Math.Atan2(calc2[1, 3], calc2[0, 3]) * 180 / Math.PI;
+
+            Console.Write(joint1);
+
         }
 
     }
