@@ -458,8 +458,8 @@ namespace MatrixMulti
             // current joint angles
             //double[] theta = { 45, 45, 45, 45, 45, 45 };
             //double[] theta = { 45, 45, 45, 45, 45, 45 };
-            double[] theta = { 45, -45, 45, 45, 45, 45 };
-            //double[] theta = { 0, 0, -90, 0, 30, 0 };
+            //double[] theta = { 45, -45, 45, 45, 45, 45 };
+            double[] theta = { 0, 0, -90, 0, 30, 0 };
 
             // forward kinematics
             calc3 = Matrix.axisToAxis(calc3, theta[0], d[0], r[0], alpha[0]);
