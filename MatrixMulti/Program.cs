@@ -475,12 +475,12 @@ namespace MatrixMulti
 
 
             // RoboAnalyzer KR5 ARC // Berechnung DH Parameter passt, 3d Modell Position passt nicht ?!
-            double[] theta = { 0, 90, 0, 0, 270, -180 };
+            double[] theta = { 0,90, 30, 10, 30, -34 };
             double[] d = { 400, 135, 135, 620, 0, 115 };
             double[] r = { 180, 600, 120, 0, 0, 0, };
-            //double[] alpha = { 90, 0, 90, 90, 90, 0 };
-            //double[] alpha = { 90, -180, -270, 90, 90, 0 };
             double[] alpha = { 90, 180, -90, 90, -90, 0 }; // sollte passen
+            ////double[] alpha = { 90, 0, 90, 90, 90, 0 };
+            ////double[] alpha = { 90, -180, -270, 90, 90, 0 };
 
             // KR 210 IC
             //double[] theta = { 0, -90, 90, 0, 0, 0 };
