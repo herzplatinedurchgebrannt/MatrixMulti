@@ -273,8 +273,29 @@ namespace MatrixMulti
 
         }
 
+        public static double[] getOrientationEuler(double[,] P)
+        {
+            double[] result = new double[3];
 
-            public static void print(double[,] A)
+            double A = Math.Atan(P[1, 0] / P[0, 0]);
+            A = A * 180 / Math.PI;
+
+            double B = Math.Atan(-P[2, 0] / (P[0, 0] * Math.Cos(A) + P[1, 0] * Math.Sin(A)));
+            B = B * 180 / Math.PI;
+
+            double C = Math.Atan((-P[0, 2] * Math.Sin(A) - P[1, 2] * Math.Cos(A)) / (P[1,1] * Math.Cos(A) - P[0,1] * Math.Sin(A)));
+            C = C * 180 / Math.PI;
+
+
+            result[0] = A;
+            result[1] = B;
+            result[2] = C;
+            return result;
+
+        }
+
+
+        public static void print(double[,] A)
         {
             int arows = A.GetLength(0);
             int acolumns = A.Length / A.GetLength(0);
@@ -475,7 +496,7 @@ namespace MatrixMulti
 
 
             // RoboAnalyzer KR5 ARC // Berechnung DH Parameter passt, 3d Modell Position passt nicht ?!
-            double[] theta = { 0,90, 30, 10, 30, -34 };
+            double[] theta = { 0,90, 30, 10, 50, 0 };
             double[] d = { 400, 135, 135, 620, 0, 115 };
             double[] r = { 180, 600, 120, 0, 0, 0, };
             double[] alpha = { 90, 180, -90, 90, -90, 0 }; // sollte passen
@@ -508,6 +529,8 @@ namespace MatrixMulti
             calc3 = Matrix.axisToAxis(calc3, theta[5], d[5], r[5], alpha[5]);
 
             Matrix.print(calc3);
+
+            Matrix.getOrientationEuler(calc3);
 
             Console.WriteLine("Forward");
 
