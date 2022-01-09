@@ -274,7 +274,7 @@ namespace MatrixMulti
         }
 
 
-        public static void print(double[,] A)
+            public static void print(double[,] A)
         {
             int arows = A.GetLength(0);
             int acolumns = A.Length / A.GetLength(0);
@@ -442,10 +442,17 @@ namespace MatrixMulti
 
 
             // robot mada
-            // PUMA 560 
+            // PUMA 560 Vorlesung
+            //double[] theta = { 45, 45, 45, 45, 45, 45 };
             //double[] d = { 671.83, 139.70, 0, 431.80, 0, 56.50 };
             //double[] r = { 0, 431.80, -20.32, 0, 0, 0 };
             //double[] alpha = { -90, 0, 90, -90, 90, 0 };
+
+            // PUMA RoboAnalyzer -> DH Parameter / Umrechnung passt, 3d Modell liefert andere Werte?!
+            //double[] theta = { 0, 0, 0, 0, 0, 0 };
+            //double[] d = { 774.21, 101.592, -38.1, 267.969, 0, 58.42 };
+            //double[] r = { 0, 506.628, 20, 0, 0, 0 };
+            //double[] alpha = { -90, 180, -90, 90, -90, 0 };
 
 
             //
@@ -467,11 +474,20 @@ namespace MatrixMulti
             //double[] alpha = { -90, 0, 90, -90, 90, 180 };
 
 
-            // RoboAnalyzer KR5 ARC
-            double[] theta = { -90, 90, 0, -90, 200, -70 };
+            // RoboAnalyzer KR5 ARC // Berechnung DH Parameter passt, 3d Modell Position passt nicht ?!
+            double[] theta = { 0, 90, 0, 0, 270, -180 };
             double[] d = { 400, 135, 135, 620, 0, 115 };
             double[] r = { 180, 600, 120, 0, 0, 0, };
-            double[] alpha = { 90, 180, -90, 90, 90, 0 };
+            //double[] alpha = { 90, 0, 90, 90, 90, 0 };
+            //double[] alpha = { 90, -180, -270, 90, 90, 0 };
+            double[] alpha = { 90, 180, -90, 90, -90, 0 }; // sollte passen
+
+            // KR 210 IC
+            //double[] theta = { 0, -90, 90, 0, 0, 0 };
+            //double[] d = { -675, 0, 0, -1200, 0, -215 };
+            //double[] r = { 350, 1150, -41, 0, 0, 0, };
+            //double[] alpha = { 90, 0, 90, 90, -90, 0 };
+
 
             // current joint angles
             //double[] theta = { 45, 45, 45, 45, 45, 45 };
@@ -480,15 +496,26 @@ namespace MatrixMulti
 
             // forward kinematics
             calc3 = Matrix.axisToAxis(calc3, theta[0], d[0], r[0], alpha[0]);
+            Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[1], d[1], r[1], alpha[1]);
+            Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[2], d[2], r[2], alpha[2]);
+            Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[3], d[3], r[3], alpha[3]);
+            Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[4], d[4], r[4], alpha[4]);
+            Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[5], d[5], r[5], alpha[5]);
 
             Matrix.print(calc3);
 
             Console.WriteLine("Forward");
+
+            Console.WriteLine();
+
+            Console.WriteLine();
+
+            Console.WriteLine();
 
             double[] joints = new double[6];
 
