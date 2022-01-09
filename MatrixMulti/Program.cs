@@ -450,16 +450,33 @@ namespace MatrixMulti
 
             //
             // KR 210
-            double[] d = { 675, 0,    0,  1200, 0, 240 };
-            double[] r = { 350, 1150, 41, 0,    0, 0 };
-            double[] alpha = { -90, -90, 90, -90, 90, 0 };
+            // double[] d = { 675, 0,    0,    1200,   0,  215 };
+            // double[] r = { 0,   350,  1150, -41,    0,  0, };
+            // double[] alpha = { 0, -90, 0,  -90,    90, -90 };
 
+            // DH PARAMETER KR 60 https://www.youtube.com/watch?v=qZB3_gKBwf8&list=WL&index=15
+            //double[] d = { 815, 0, 0, 820, 0, 170 };
+            //double[] r = { 350, 850, 145, 0, 0, 0, };
+            //double[] alpha = { -90, 0, -90, -90, 90, 0 };
+
+
+            // KR5 http://www.diag.uniroma1.it/~deluca/rob1_en/Robotics1_Homework1_10-11.pdf
+            //double[] theta = { 90, -90, 0, 0, 0, 0 };
+            //double[] d = { 335, 0, 0, -295, 0, -80 };
+            //double[] r = { 75, 270, 90, 0, 0, 0, };
+            //double[] alpha = { -90, 0, 90, -90, 90, 180 };
+
+
+            // RoboAnalyzer KR5 ARC
+            double[] theta = { -90, 90, 0, -90, 200, -70 };
+            double[] d = { 400, 135, 135, 620, 0, 115 };
+            double[] r = { 180, 600, 120, 0, 0, 0, };
+            double[] alpha = { 90, 180, -90, 90, 90, 0 };
 
             // current joint angles
             //double[] theta = { 45, 45, 45, 45, 45, 45 };
             //double[] theta = { 45, 45, 45, 45, 45, 45 };
-            //double[] theta = { 45, -45, 45, 45, 45, 45 };
-            double[] theta = { 0, 0, -90, 0, 30, 0 };
+            //double[] theta = { 3.7, -91.2,56.8, 0, 0, 0 };
 
             // forward kinematics
             calc3 = Matrix.axisToAxis(calc3, theta[0], d[0], r[0], alpha[0]);
@@ -470,6 +487,8 @@ namespace MatrixMulti
             calc3 = Matrix.axisToAxis(calc3, theta[5], d[5], r[5], alpha[5]);
 
             Matrix.print(calc3);
+
+            Console.WriteLine("Forward");
 
             double[] joints = new double[6];
 
