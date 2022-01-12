@@ -536,16 +536,6 @@ namespace MatrixMulti
             Console.WriteLine("B: " + orientation[1]);
             Console.WriteLine("C: " + orientation[2]);
 
-            Console.ReadLine();
-
-
-
-
-
-
-
-
-
 
 
 
@@ -558,6 +548,11 @@ namespace MatrixMulti
             double D1 = d[1] / C1;
 
             joints[0] = Math.Round((Math.Atan2(P5[1], P5[0]) - Math.Atan2(D1, Math.Sqrt(1 - Math.Pow(D1, 2)))) * 180 / Math.PI);
+            joints[0] = Math.Atan2(P5[1], P5[0]) * 180 / Math.PI;
+
+            Console.WriteLine(joints[0]);
+
+
 
             double C2 = P5[2] - d[0];
             double C3 = Math.Sqrt(Math.Pow(C1, 2) + Math.Pow(C2, 2));
@@ -576,7 +571,8 @@ namespace MatrixMulti
 
             joints[1] = Math.Round((a_2 - p_2) * 180 / Math.PI);
             joints[2] = Math.Round((Math.Atan2(Math.Sqrt(1 - Math.Pow(D3, 2)), D3) * 180 / Math.PI) - 90);
-
+            Console.WriteLine(joints[1]);
+            Console.WriteLine(joints[2]);
 
 
             double[,] T0_3 = { { 1, 0, 0 ,0 },
@@ -613,7 +609,9 @@ namespace MatrixMulti
                 //Console.WriteLine(j);
             }
 
-            //Console.ReadLine();
+            Console.ReadLine();
+
+
 
 
 
