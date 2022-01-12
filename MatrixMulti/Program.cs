@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 
 namespace MatrixMulti
@@ -277,14 +277,20 @@ namespace MatrixMulti
         {
             double[] result = new double[3];
 
-            double A = Math.Atan(P[1, 0] / P[0, 0]);
-            A = A * 180 / Math.PI;
+            double A = Math.Atan2(P[1, 0], P[0, 0]) * 180 / Math.PI;
+            double B = Math.Atan2(-P[2, 0], Math.Sqrt(Math.Pow(P[0, 0], 2) + Math.Pow(P[1, 0], 2))) * 180 / Math.PI;
+            double C = Math.Atan2(P[2, 1], P[2, 2]) * 180 / Math.PI;
 
-            double B = Math.Atan(-P[2, 0] / (P[0, 0] * Math.Cos(A) + P[1, 0] * Math.Sin(A)));
-            B = B * 180 / Math.PI;
-
-            double C = Math.Atan((-P[0, 2] * Math.Sin(A) - P[1, 2] * Math.Cos(A)) / (P[1,1] * Math.Cos(A) - P[0,1] * Math.Sin(A)));
-            C = C * 180 / Math.PI;
+            if (B == 90)
+            {
+                A = 0;
+                C = Math.Atan2(P[0, 1], P[1, 1]) * 180 / Math.PI;
+            }
+            else if (B == -90)
+            {
+                A = 0;
+                C = -Math.Atan2(P[0, 1], P[1, 1]) * 180 / Math.PI;
+            }
 
 
             result[0] = A;
@@ -397,64 +403,10 @@ namespace MatrixMulti
 
             //Matrix.print(g);
 
-
-
             g = Matrix.multiplyMatrix(E, F);
 
-            //Matrix.print(g);
-            /*
-            double[,] calc = { { 1, 0, 0 ,0 },
-                               { 0, 1, 0, 0 },
-                               { 0, 0, 1, 0 },
-                               { 0, 0, 0, 1 } };
 
-            calc = Matrix.axisToAxis(calc, 0, 815, 350, -90);
-            Matrix.print(calc);
-            calc = Matrix.axisToAxis(calc, -90, 0, 850, 0);
-            Matrix.print(calc);
-            calc = Matrix.axisToAxis(calc, 0, 0, 145, -90);
-            Matrix.print(calc);
-            calc = Matrix.axisToAxis(calc, 0, 820, 0, -90);
-            Matrix.print(calc);
-            calc = Matrix.axisToAxis(calc, 0, 0, 0, 90);
-            Matrix.print(calc);
-            calc = Matrix.axisToAxis(calc, 0, 170, 0, 0);
-            Matrix.print(calc);
-
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-
-
-            double[,] calc2 = { { 1, 0, 0 ,0 },
-                                { 0, 1, 0, 0 },
-                                { 0, 0, 1, 0 },
-                                { 0, 0, 0, 1 } };
-
-            calc2 = Matrix.axisToAxis(calc2, -66.146, 675, 350, -90);
-            Matrix.print(calc2);
-            calc2 = Matrix.axisToAxis(calc2, -18.726, 0, 1150, 0);
-            Matrix.print(calc2);
-            calc2 = Matrix.axisToAxis(calc2, -36.092, 0, -41, -90);
-            Matrix.print(calc2);
-            calc2 = Matrix.axisToAxis(calc2, 178.344, 1200, 0, 90);
-            Matrix.print(calc2);
-            calc2 = Matrix.axisToAxis(calc2, -110.097, 0, 0, -90);
-            Matrix.print(calc2);
-            calc2 = Matrix.axisToAxis(calc2, 62.474, 190, 0, 0);
-            Matrix.print(calc2);
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Gelenk Achse 1:");
-
-            double joint1 = Math.Atan2(calc2[1, 3], calc2[0, 3]) * 180 / Math.PI;
-
-            Console.Write(joint1);*/
-
+        
             // start position/ orientation
             double[,] calc3 = { { 1, 0, 0 ,0 },
                                 { 0, 1, 0, 0 },
@@ -496,18 +448,34 @@ namespace MatrixMulti
 
 
             // RoboAnalyzer KR5 ARC // Berechnung DH Parameter passt, 3d Modell Position passt nicht ?!
-            double[] theta = { 0,90, 30, 10, 50, 0 };
-            double[] d = { 400, 135, 135, 620, 0, 115 };
-            double[] r = { 180, 600, 120, 0, 0, 0, };
-            double[] alpha = { 90, 180, -90, 90, -90, 0 }; // sollte passen
+            //double[] theta = { 0, 90, 30, 10, 50, 0 };
+            //double[] d = { 400, 135, 135, 620, 0, 115 };
+            //double[] r = { 180, 600, 120, 0, 0, 0, };
+            //double[] alpha = { 90, 180, -90, 90, -90, 0 }; // sollte passen
             ////double[] alpha = { 90, 0, 90, 90, 90, 0 };
             ////double[] alpha = { 90, -180, -270, 90, 90, 0 };
 
             // KR 210 IC
-            //double[] theta = { 0, -90, 90, 0, 0, 0 };
+            //double[] theta = { 74.24, -64.02, 106.72, 72.83, -79.26, 132.54 }; // 677.35, -1658.05, 883.45 // -155.77°, -84.36°, -27.93°  110 010010 bin
             //double[] d = { -675, 0, 0, -1200, 0, -215 };
             //double[] r = { 350, 1150, -41, 0, 0, 0, };
+            // double[] alpha = { 90, 0, 90, 90, -90, 0 }; KUKA QUELLE
             //double[] alpha = { 90, 0, 90, 90, -90, 0 };
+
+
+            // KR 210 http://www.oemg.ac.at/Mathe-Brief/fba2015/VWA_Prutsch.pdf
+            // double[] theta = { -66.146, -18.726, -90 + 53.908, 178.344, -110.097, 180-117.526 };
+            // double[] theta = { 66.146 * (-1), -18.726, -90 + 53.908, -178.344 * (-1), -110.097, 180 - 117.526 }; IO!
+
+            double[] pos_1 = { 90.54, -79.94, 110.80, 86.36, -87.36, 120.96 }; // SOLL: 561.24, -1667.26, 785.58, -171.77°, -86.55°, -25.38° 110 010010
+            double[] theta = { pos_1[0] * (-1), pos_1[1], -90 + pos_1[2], pos_1[3] * (-1), pos_1[4], 180 - pos_1[5] }; 
+
+            // double[] d = { 675, 0, 0, 1200, 0, 190 }; // Script
+            double[] d = { 675, 0, 0, 1200, 0, 215 }; // InnoCenter
+            double[] r = { 350, 1150, -41, 0, 0, 0 };
+            double[] alpha = { -90, 0, -90, 90, -90, 0 };
+
+
 
 
             // current joint angles
@@ -517,29 +485,71 @@ namespace MatrixMulti
 
             // forward kinematics
             calc3 = Matrix.axisToAxis(calc3, theta[0], d[0], r[0], alpha[0]);
-            Matrix.print(calc3);
+            //Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[1], d[1], r[1], alpha[1]);
-            Matrix.print(calc3);
+            //Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[2], d[2], r[2], alpha[2]);
-            Matrix.print(calc3);
+            //Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[3], d[3], r[3], alpha[3]);
-            Matrix.print(calc3);
+            //Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[4], d[4], r[4], alpha[4]);
-            Matrix.print(calc3);
+            //Matrix.print(calc3);
             calc3 = Matrix.axisToAxis(calc3, theta[5], d[5], r[5], alpha[5]);
 
+            Console.WriteLine("Forward kinematics: (Tool 0, Base 0)");
             Matrix.print(calc3);
 
-            Matrix.getOrientationEuler(calc3);
+            // TCP: -494.921, 0.878, 238.185, 0, -90, 0
 
-            Console.WriteLine("Forward");
-
-            Console.WriteLine();
-
-            Console.WriteLine();
+            calc3 = Matrix.multiplyMatrix(calc3, Matrix.getTranslationMatrix(-494.921, 0.878, 238.185));
+            calc3 = Matrix.multiplyMatrix(calc3, Matrix.getRotationMatrix(Matrix.RotationAxis.Y, -90));
 
             Console.WriteLine();
+            Console.WriteLine("Forward kinematics: (TCP, Base 0)");
+            Matrix.print(calc3);
 
+            double[] orientation = new double[3];
+            orientation = Matrix.getOrientationEuler(calc3);
+
+            /*
+            double Orientation_A = Math.Atan2(calc3[1, 0], calc3[0, 0]) * 180 / Math.PI;
+            double Orientation_B = Math.Atan2(-calc3[2, 0], Math.Sqrt(Math.Pow(calc3[0, 0], 2) + Math.Pow(calc3[1, 0], 2))) * 180 / Math.PI;
+            double Orientation_C = Math.Atan2(calc3[2, 1], calc3[2, 2]) * 180 / Math.PI;
+
+            if (Orientation_B == 90)
+            {
+                Orientation_A = 0;
+                Orientation_C = Math.Atan2(calc3[0, 1], calc3[1, 1]) * 180 / Math.PI;
+            }
+            else if (Orientation_B == -90)
+            {
+                Orientation_A = 0;
+                Orientation_C = - Math.Atan2(calc3[0, 1], calc3[1, 1]) * 180 / Math.PI;
+            }*/
+
+
+            Console.WriteLine("Position:");
+            Console.WriteLine("X: " + calc3[0, 3]);
+            Console.WriteLine("Y: " + calc3[1, 3]);
+            Console.WriteLine("Z: " + calc3[2, 3]);
+            Console.WriteLine("A: " + orientation[0]);
+            Console.WriteLine("B: " + orientation[1]);
+            Console.WriteLine("C: " + orientation[2]);
+
+            Console.ReadLine();
+
+
+
+
+
+
+
+
+
+
+
+
+            // INVERSE KINEMATICS PUMA560
             double[] joints = new double[6];
 
             double[] P5 = { calc3[0, 3] - d[5] * calc3[0, 2], calc3[1, 3] - d[5] * calc3[1, 2], calc3[2, 3] - d[5] * calc3[2, 2] };
@@ -578,19 +588,19 @@ namespace MatrixMulti
             T0_3 = Matrix.axisToAxis(T0_3, joints[1], d[1], r[1], alpha[1]);
             T0_3 = Matrix.axisToAxis(T0_3, joints[2], d[2], r[2], alpha[2]);
 
-            Matrix.print(T0_3);
-            Console.WriteLine();
+            //Matrix.print(T0_3);
+            //Console.WriteLine();
 
             double[,] T0_3_inv = Matrix.getInverseMatrix(T0_3);
 
-            Matrix.print(T0_3_inv);
-            Console.WriteLine();
+            //Matrix.print(T0_3_inv);
+            //Console.WriteLine();
 
 
             double[,] T3_6 = Matrix.multiplyMatrix(T0_3_inv, calc3);
 
-            Matrix.print(T3_6);
-            Console.WriteLine();
+            //Matrix.print(T3_6);
+            //Console.WriteLine();
 
             joints[3] = Math.Round((Math.Atan2(T3_6[1, 2], T3_6[0, 2])) * 180 / Math.PI);
             joints[4] = Math.Round((Math.Atan2(Math.Sqrt(Math.Abs(1 - Math.Pow(T3_6[2, 2], 2))), T3_6[2, 2])) * 180 / Math.PI);
@@ -600,10 +610,10 @@ namespace MatrixMulti
 
             foreach (double j in joints)
             {
-                Console.WriteLine(j);
+                //Console.WriteLine(j);
             }
 
-            Console.ReadLine();
+            //Console.ReadLine();
 
 
 
