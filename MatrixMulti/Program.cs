@@ -3,6 +3,128 @@ using System;
 
 namespace MatrixMulti
 {
+    public class Robot
+    {
+        public Robot(string robotManufacturer, string model)
+        {
+            robotManufacturer = RobotManufacturer;
+            model = Model;
+        }
+
+        private string _RobotManufacturer;
+        public string RobotManufacturer
+        {
+            get { return _RobotManufacturer; }
+            set
+            {
+                _RobotManufacturer = value;
+            }
+        }
+
+        private string _Model;
+        public string Model
+        {
+            get { return _Model; }
+            set
+            {
+                _Model = value;
+            }
+        }
+
+        private double[] _DHParameter_Pos2Theta;
+        public double[] DHParameter_Pos2Theta
+        {
+            get { return _DHParameter_Pos2Theta; }
+            set
+            {
+                _DHParameter_Pos2Theta = value;
+            }
+        }
+
+        private double[] _DHParameter_d;
+        public double[] DHParameter_d
+        {
+            get { return _DHParameter_d; }
+            set
+            {
+                _DHParameter_d = value;
+            }
+        }
+
+        private double[] _DHParameter_a;
+        public double[] DHParameter_a
+        {
+            get { return _DHParameter_a; }
+            set
+            {
+                _DHParameter_a = value;
+            }
+        }
+
+        private double[] _DHParameter_alpha;
+        public double[] DHParameter_alpha
+        {
+            get { return _DHParameter_alpha; }
+            set
+            {
+                _DHParameter_alpha = value;
+            }
+        }
+
+        private double[] _MaxAxisValue;
+        public double[] MaxAxisValue
+        {
+            get { return _MaxAxisValue; }
+            set
+            {
+                _MaxAxisValue = value;
+            }
+        }
+
+        private double[] _MinAxisValue;
+        public double[] MinAxisValue
+        {
+            get { return _MinAxisValue; }
+            set
+            {
+                _MinAxisValue = value;
+            }
+        }
+
+
+    }
+
+    public class PositionAbsolute
+    {
+        public PositionAbsolute()
+        {
+
+        }
+
+        public PositionAbsolute(double J1, double J2, double J3, double J4, double J5, double J6)
+        {
+
+        }
+    }
+
+    public class PositionKartesian
+    {
+        public PositionKartesian()
+        {
+
+        }
+
+        public PositionKartesian(double X, double Y, double Z, double A, double B, double C)
+        {
+
+        }
+
+        public PositionKartesian(double X, double Y, double Z, double A, double B, double C, int S, int T)
+        {
+
+        }
+    }
+
     public static class Matrix
     {
         public enum RotationAxis
@@ -161,7 +283,6 @@ namespace MatrixMulti
             return result;
         }
 
-
         public static double[,] getTranslationMatrix(double x = 0, double y = 0, double z = 0)
         {
             // Verschiebung vom Punkt im Raum
@@ -176,8 +297,8 @@ namespace MatrixMulti
         public static double[,] getRotationMatrix(RotationAxis rotationaxis, double angle)
         {
             // Drehung vom Achse
-            double cosO = Math.Round(Math.Cos(angle * Math.PI / 180), 9);
-            double sinO = Math.Round(Math.Sin(angle * Math.PI / 180), 9);
+            double cosO = Math.Round(Math.Cos(angle * Math.PI / 180), 3);
+            double sinO = Math.Round(Math.Sin(angle * Math.PI / 180), 3);
 
             double[,] rotationMatrix = new double[4, 4];
 
@@ -459,8 +580,14 @@ namespace MatrixMulti
             // double[] theta = { -66.146, -18.726, -90 + 53.908, 178.344, -110.097, 180-117.526 };
             // double[] theta = { 66.146 * (-1), -18.726, -90 + 53.908, -178.344 * (-1), -110.097, 180 - 117.526 }; IO!
 
+            //double[] pos_1 = { 90.54, -79.92, 110.80, 86.36, -87.36, 120.98 }; // SOLL: 561.24, -1667.26, 785.58, -171.77°, -86.55°, -25.38° 110 010010 // 110  010010
+
+
+
+
             double[] pos_1 = { 90.54, -79.92, 110.80, 86.36, -87.36, 120.98 }; // SOLL: 561.24, -1667.26, 785.58, -171.77°, -86.55°, -25.38° 110 010010 // 110  010010
             double[] theta = { pos_1[0] * (-1), pos_1[1], -90 + pos_1[2], pos_1[3] * (-1), pos_1[4], 180 - pos_1[5] };
+            double[,] rangeAxis = { { -185, 185 }, { -140, -5 }, { -120, 155 }, { -350, 350 }, { -125, 125 }, { -350, 350 } };
 
             // double[] d = { 675, 0, 0, 1200, 0, 190 }; // Script
             double[] d = { 675, 0, 0, 1200, 0, 215 }; // InnoCenter
@@ -468,20 +595,26 @@ namespace MatrixMulti
             double[] alpha = { -90, 0, -90, 90, -90, 0 };
 
 
-            // Theta: (Gelenkwinkel) Robtation um z(n-1) Achse, damit x(n-1) parallel zu xn Achse liegt
+
+            Robot Robert = new Robot("KUKA", "KR210 R2700 EXTRA");
+
+            Robert.DHParameter_Pos2Theta = pos_1;
+            Robert.DHParameter_d = d;
+            Robert.DHParameter_a = r;
+            Robert.DHParameter_alpha = alpha;
+
+            // Theta: (Gelenkwinkel) Rotation um z(n-1) Achse, damit x(n-1) parallel zu xn Achse liegt
             // d: Translation (Gelenkabstand) entlang z(n-1) Achse bis auf den Punkt wo sich z(n-1) und xn schneiden
             // a: Translation (Armelementlänge) entlang der xn Achse um die Ursprünge der Koordinatensysteme in Deckung zu bringen
             // Alpha: (Verwindung) um die xn Achse um die z(n-1) Achse in die zn Achse zu überführen
 
 
-            double[,] T0_6;
-
             double[,] T0_1;
-            double[,] T1_2;
-            double[,] T2_3;
-            double[,] T3_4;
-            double[,] T4_5;
-            double[,] T5_6;
+            double[,] T0_2;
+            double[,] T0_3;
+            double[,] T0_4;
+            double[,] T0_5;
+            double[,] T0_6;
 
             // WCP
             double[,] T6_5;
@@ -495,33 +628,33 @@ namespace MatrixMulti
 
             // T0_1
             T0_1 = Matrix.axisToAxis(RobRoot, theta[0], d[0], r[0], alpha[0]);
-            Console.WriteLine("T0_1");
-            Matrix.print(T0_1);
+            //Console.WriteLine("T0_1");
+            //Matrix.print(T0_1);
 
             // T1_2
-            T1_2 = Matrix.axisToAxis(T0_1, theta[1], d[1], r[1], alpha[1]);
+            T0_2 = Matrix.axisToAxis(T0_1, theta[1], d[1], r[1], alpha[1]);
             //Console.WriteLine("T1_2");
             //Matrix.print(T1_2);
 
             // T2_3
-            T2_3 = Matrix.axisToAxis(T1_2, theta[2], d[2], r[2], alpha[2]);
+            T0_3 = Matrix.axisToAxis(T0_2, theta[2], d[2], r[2], alpha[2]);
             //Matrix.print(calc3);
 
             // T3_4
-            T3_4 = Matrix.axisToAxis(T2_3, theta[3], d[3], r[3], alpha[3]);
+            T0_4 = Matrix.axisToAxis(T0_3, theta[3], d[3], r[3], alpha[3]);
             //Matrix.print(calc3);
 
             // T4_5
-            T4_5 = Matrix.axisToAxis(T3_4, theta[4], d[4], r[4], alpha[4]);
+            T0_5 = Matrix.axisToAxis(T0_4, theta[4], d[4], r[4], alpha[4]);
             //Matrix.print(calc3);
 
             // T5_6
-            T5_6 = Matrix.axisToAxis(T4_5, theta[5], d[5], r[5], alpha[5]);
+            T0_6 = Matrix.axisToAxis(T0_5, theta[5], d[5], r[5], alpha[5]);
 
             Console.WriteLine("Forward kinematics: (Tool 0, Base 0)");
-            Matrix.print(T5_6);
+            Matrix.print(T0_6);
 
-            T0_6 = T5_6;
+            //T0_6 = T5_6;
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             // TCP CALCULATION 
@@ -538,9 +671,9 @@ namespace MatrixMulti
             ////////////////////////////////////////////////////////////////////////////////////////////
 
             double[] orientation = new double[3];
-            orientation = Matrix.getOrientationEuler(T5_6);
+            orientation = Matrix.getOrientationEuler(T0_6);
 
-            Console.WriteLine("Position:");
+            Console.WriteLine("kartesian position:");
             Console.WriteLine("X: " + T0_6[0, 3]);
             Console.WriteLine("Y: " + T0_6[1, 3]);
             Console.WriteLine("Z: " + T0_6[2, 3]);
@@ -551,80 +684,164 @@ namespace MatrixMulti
 
             ////////////////////////////////////////////////////////////////////////
 
-            // https://walter.readthedocs.io/en/latest/Kinematics/
-
-            double[] pg_0 = new double[3];
-            pg_0[0] = T0_6[0, 3];
-            pg_0[1] = T0_6[1, 3];
-            pg_0[2] = T0_6[2, 3];
-
-            double[] R0_g = new double[4];
-            R0_g[0] = -0.999;   //x
-            R0_g[1] = -0.041;   //y
-            R0_g[2] =  0.015;   //z
-            R0_g[3] =  0.001;   //w
-
-
             // calculation back to wrist-center-point WCP
 
-            T6_5 = Matrix.multiplyMatrix(T0_6, Matrix.getTranslationMatrix(0,0,-215));
+            T6_5 = Matrix.multiplyMatrix(T0_6, Matrix.getTranslationMatrix(0, 0, -215));
 
             Console.WriteLine("Wrist Center Point");
             Matrix.print(T6_5);
 
             // joint 1 ( * (-1))
-            Console.WriteLine(T6_5[0, 3]);
-            Console.WriteLine(T6_5[1, 3]);
-            Console.WriteLine(Math.Atan2(T6_5[1,3], T6_5[0,3]) * 180 / Math.PI);
+            //Console.WriteLine(T6_5[0, 3]);
+            //Console.WriteLine(T6_5[1, 3]);
+            //Console.WriteLine(Math.Atan2(T6_5[1, 3], T6_5[0, 3]) * 180 / Math.PI);
 
-            double krcJoint_1 = Math.Atan2(T6_5[1, 3], T6_5[0, 3]) * 180 / Math.PI;
+            double krcJoint_1_1 = Math.Atan2(T6_5[1, 3], T6_5[0, 3]) * 180 / Math.PI;
+            double krcJoint_1_2 = 0;
 
+            if (krcJoint_1_1 <= 0)
+            {
+                krcJoint_1_2 = krcJoint_1_1 + 180;
+            }
+            else if (krcJoint_1_1 > 0)
+            {
+                krcJoint_1_2 = krcJoint_1_1 - 180;
+            }
             // wenn x = y = 0 => Singularität bei Theta_1_l 
 
             // l1 = a2   l2 = d4
 
+            // LINKS
+            double[,] T0_1_ik_1 = Matrix.axisToAxis(RobRoot, krcJoint_1_1, d[0], r[0], alpha[0]);
+            double[,] T1_0_ik_1 = Matrix.getInverseMatrix(T0_1_ik_1);
+            double[,] T1_5_ik_1 = Matrix.multiplyMatrix(T1_0_ik_1, T0_5);
 
-            double[,] T1_0 = Matrix.getInverseMatrix(T0_1);
-            double[,] T1_5 = Matrix.multiplyMatrix(T1_0, T4_5);
+            double x = T1_5_ik_1[0, 3];
+            double y = T1_5_ik_1[1, 3];
 
-            Console.WriteLine("T1_5");
-            Matrix.print(T1_5);
+            // RECHTS
+            double[,] T0_1_ik_2 = Matrix.axisToAxis(RobRoot, krcJoint_1_2, d[0], r[0], alpha[0]);
+            double[,] T1_0_ik_2 = Matrix.getInverseMatrix(T0_1_ik_2);
+            double[,] T1_5_ik_2 = Matrix.multiplyMatrix(T1_0_ik_2, T0_5);
+
+            //double x = T1_5_ik_2[0, 3];
+            //double y = T1_5_ik_2[1, 3];
 
 
-            //double x = T6_5[0, 3] - T0_1[0, 3];
-            //double z = T6_5[1, 3] - T0_1[1, 3];
 
-            double x = T1_5[0, 3];
-            double y = T1_5[1, 3];
+            //Console.WriteLine("X & Y: ");
+            //Console.WriteLine(x);
+            //Console.WriteLine(y);
 
-            Console.WriteLine("X & Y: ");
-            Console.WriteLine(x);
-            Console.WriteLine(y);
-
+            /*
             double p_xy = 0.5 * (r[1] + d[3] + Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)));
-            double r_xy = Math.Sqrt( ((p_xy - r[1]) * (p_xy - d[3]) * (p_xy - Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)))) / (p_xy) );
+            double r_xy = Math.Sqrt(((p_xy - r[1]) * (p_xy - d[3]) * (p_xy - Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2))) / (p_xy)));
+
+            double test_j2_1 = (Math.Atan2(y, x) + (2 * Math.Atan2(r_xy, (p_xy - d[3])))) * 180 / Math.PI;     // -90 -> Ergebnis scheint bis auf Vorzeichen zu passen?!?
+            double test_j2_2 = (Math.Atan2(y, x) - (2 * Math.Atan(r_xy / (p_xy - d[3])))) * 180 / Math.PI;
+
+            double test_Alpha_1 = -2 * (Math.Atan(r_xy / (p_xy - r[1])));
+            double test_Alpha_2 = 2 * (Math.Atan(r_xy / (p_xy - r[1])));
+
+            test_Alpha_1 = test_Alpha_1 * 180 / Math.PI;
+            test_Alpha_2 = test_Alpha_2 * 180 / Math.PI;
+
+            double test_Beta = 2 * Math.Atan(r_xy / (p_xy - d[3]));
+
+            test_Beta = test_Beta * 180 / Math.PI;
+
+            double test_j3_1 = -2 * (Math.Atan(r_xy / (p_xy - r[1])) + Math.Atan(r_xy / (p_xy - d[3]))) * 180 / Math.PI - 90;
+            double test_j3_2 = 2 * (Math.Atan(r_xy / (p_xy - r[1])) + Math.Atan(r_xy / (p_xy - d[3]))) * 180 / Math.PI - 90;
+            */
+
+            //double l1 = Math.Sqrt(Math.Pow(r[1],2) + Math.Pow(r[2],2));
+            //double l2 = d[3];
+            double l1 = r[1];
+            double l2 = Math.Sqrt(Math.Pow(d[3], 2) - Math.Pow(r[2], 2));
+
+            double winkel = 180 - 90 - Math.Atan(1200 / 41) * 180 / Math.PI;
+
+            double p_xy = 0.5 * (l1 + l2 + Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)));
+            double r_xy = Math.Sqrt((p_xy - l1) * (p_xy - l2) * (p_xy - Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2))) / (p_xy));
+
+            double test_j2_1 = (Math.Atan2(y, x) + (2 * Math.Atan(r_xy / (p_xy - l2)))) * 180 / Math.PI ;     
+            double test_j2_2 = (Math.Atan2(y, x) - (2 * Math.Atan(r_xy / (p_xy - l2)))) * 180 / Math.PI;
+
+            double test_Alpha_1 = -2 * (Math.Atan(r_xy / (p_xy - r[1])));
+            double test_Alpha_2 =  2 * (Math.Atan(r_xy / (p_xy - r[1])));
+
+            test_Alpha_1 = test_Alpha_1 * 180 / Math.PI;
+            test_Alpha_2 = test_Alpha_2 * 180 / Math.PI;
+
+            double test_Beta = 2 * Math.Atan( r_xy / (p_xy - d[3]));
+
+            test_Beta = test_Beta * 180 / Math.PI;
+
+            double test_j3_1 = -2 * (Math.Atan(r_xy / (p_xy - r[1])) + Math.Atan(r_xy / (p_xy - d[3]))) * 180 / Math.PI - 90 - winkel;
+            double test_j3_2 = 2 * (Math.Atan(r_xy / (p_xy - r[1])) + Math.Atan(r_xy / (p_xy - d[3]))) * 180 / Math.PI - 90 - winkel;
 
 
+            double[,] T3_6 = Matrix.multiplyMatrix(Matrix.getInverseMatrix(T0_3), T0_6);
+
+            double eulerBeta_1 = Math.Atan2(Math.Sqrt(Math.Pow(T3_6[2, 0], 2) + Math.Pow(T3_6[2, 1], 2)), T3_6[2, 2]);
+            eulerBeta_1 = eulerBeta_1 * 180 / Math.PI;
+            double eulerBeta_2 = Math.Atan2( - Math.Sqrt(Math.Pow(T3_6[2, 0], 2) + Math.Pow(T3_6[2, 1], 2)), T3_6[2, 2]);
+            eulerBeta_2 = eulerBeta_2 * 180 / Math.PI;
+
+            double eulerAlpha_1 = Math.Atan2(T3_6[1, 2] / eulerBeta_1, T3_6[0, 2] / eulerBeta_1);
+            eulerAlpha_1 = eulerAlpha_1 * 180 / Math.PI;
+            double eulerAlpha_2 = Math.Atan2(T3_6[1, 2] / eulerBeta_2, T3_6[0, 2] / eulerBeta_2);
+            eulerAlpha_2 = eulerAlpha_2 * 180 / Math.PI;
+
+            double eulerGamma_1 = Math.Atan2(T3_6[2, 1] / eulerBeta_1, -T3_6[2, 0] / eulerBeta_1);
+            eulerGamma_1 = eulerGamma_1 * 180 / Math.PI;
+            double eulerGamma_2 = Math.Atan2(T3_6[2, 1] / eulerBeta_2, -T3_6[2, 0] / eulerBeta_2);
+            eulerGamma_2 = eulerGamma_2 * 180 / Math.PI;
 
 
+            Console.WriteLine("given joint positions KRC:");
+            foreach (double posJoint in pos_1)
+            {
+                Console.WriteLine(posJoint);
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("given joint DH Theta:");
+            foreach (double posJoint in theta)
+            {
+                Console.WriteLine(posJoint);
+            }
+            Console.WriteLine();
 
 
-            double test_j2_1 = (Math.Atan2(x, y) + ( 2 * Math.Atan(r_xy / (p_xy - d[3])) )) * 180 / Math.PI  -90;     // -90 -> Ergebnis scheint bis auf Vorzeichen zu passen?!?
-            double test_j2_2 = (Math.Atan2(x, y) - (2 * Math.Atan(r_xy / (p_xy - d[3])))) * 180 / Math.PI;
-
-            double test_j3_1 = 2 * (Math.Atan(r_xy / (p_xy - r[1])) + Math.Atan(r_xy / (p_xy - d[3]))) * 180 / Math.PI;
-            double test_j3_2 = -2 * (Math.Atan(r_xy / (p_xy - r[1])) + Math.Atan(r_xy / (p_xy - d[3]))) * 180 / Math.PI;
-
-
-
-
-
+            Console.WriteLine("krc joints:");
+            Console.WriteLine("J1_1: " + Math.Round(krcJoint_1_1,2));
+            Console.WriteLine("J1_2: " + Math.Round(krcJoint_1_2,2));
+            Console.WriteLine();
+            Console.WriteLine("J2_1: " + Math.Round(test_j2_1,2));
+            Console.WriteLine("J2_2: " + Math.Round(test_j2_2,2));
+            Console.WriteLine();
+            Console.WriteLine("J3_1: " + Math.Round(test_j3_1,2));
+            Console.WriteLine("J3_2: " + Math.Round(test_j3_2,2));
+            Console.WriteLine();
+            Console.WriteLine("J4_1: " + Math.Round(eulerAlpha_1,2));
+            Console.WriteLine("J4_2: " + Math.Round(eulerAlpha_2,2));
+            Console.WriteLine();
+            Console.WriteLine("J5_1: " + Math.Round(eulerBeta_1,2));
+            Console.WriteLine("J5_2: " + Math.Round(eulerBeta_2,2));
+            Console.WriteLine();
+            Console.WriteLine("J6_1: " + Math.Round(eulerGamma_1,2));
+            Console.WriteLine("J6_2: " + Math.Round(eulerGamma_2,2));
+            Console.WriteLine();
+            Console.WriteLine();
 
 
 
             /////////////////////////////////////////////////////////////////////
 
             // INVERSE KINEMATICS PUMA560
+
+            /*
             double[] joints = new double[6];
 
             double[] P5 = { RobRoot[0, 3] - d[5] * RobRoot[0, 2], RobRoot[1, 3] - d[5] * RobRoot[1, 2], RobRoot[2, 3] - d[5] * RobRoot[2, 2] };
@@ -636,7 +853,7 @@ namespace MatrixMulti
             joints[0] = Math.Atan2(P5[1], P5[0]) * 180 / Math.PI;
 
 
-       
+
 
             double C2 = P5[2] - d[0];
             double C3 = Math.Sqrt(Math.Pow(C1, 2) + Math.Pow(C2, 2));
@@ -692,9 +909,9 @@ namespace MatrixMulti
 
             Console.ReadLine();
 
+    */
 
-
-
+            Console.ReadLine();
 
         }
 
