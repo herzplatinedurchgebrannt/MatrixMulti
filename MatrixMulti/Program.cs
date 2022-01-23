@@ -5,10 +5,17 @@ namespace MatrixMulti
 {
     public class Robot
     {
-        public Robot(string robotManufacturer, string model)
+        public Robot(double[] DHParameter_Pos2Theta, double[] DHParameter_d, double[] DHParameter_a, double[] DHParameter_alpha, double[,] AxisLimits)
         {
-            robotManufacturer = RobotManufacturer;
-            model = Model;
+            this.DHParameter_Pos2Theta = DHParameter_Pos2Theta;
+            this.DHParameter_d = DHParameter_d;
+            this.DHParameter_a = DHParameter_a;
+            this.DHParameter_alpha = DHParameter_alpha;
+            this.AxisLimits = AxisLimits;
+
+            this.RobRoot = World;
+            this.ToolAct = Tool0;
+            this.BaseAct = RobRoot;
         }
 
         private string _RobotManufacturer;
@@ -71,27 +78,58 @@ namespace MatrixMulti
             }
         }
 
-        private double[] _MaxAxisValue;
-        public double[] MaxAxisValue
+        private double[,] _AxisLimits;
+        public double[,] AxisLimits
         {
-            get { return _MaxAxisValue; }
+            get { return _AxisLimits; }
             set
             {
-                _MaxAxisValue = value;
+                _AxisLimits = value;
             }
         }
 
-        private double[] _MinAxisValue;
-        public double[] MinAxisValue
+        public static readonly double[,] World =  { { 1, 0, 0 ,0 },
+                                                    { 0, 1, 0, 0 },
+                                                    { 0, 0, 1, 0 },
+                                                    { 0, 0, 0, 1 } };
+
+        public static readonly double[,] Tool0 =  { { 1, 0, 0 ,0 },
+                                                    { 0, 1, 0, 0 },
+                                                    { 0, 0, 1, 0 },
+                                                    { 0, 0, 0, 1 } };
+
+        private double[,] _RobRoot;
+        public double[,] RobRoot
         {
-            get { return _MinAxisValue; }
+            get { return _RobRoot; }
             set
             {
-                _MinAxisValue = value;
+                _RobRoot = value;
             }
         }
 
+        private double[,] _ToolAct;
+        public double[,] ToolAct
+        {
+            get { return _ToolAct; }
+            set
+            {
+                _ToolAct = value;
+            }
+        }
 
+        private double[,] _BaseAct;
+        public double[,] BaseAct
+        {
+            get { return _BaseAct; }
+            set
+            {
+                _BaseAct = value;
+            }
+        }
+
+        // INVERSE KINEMATICS
+        // FORWARD KINEMATICS
     }
 
     public class PositionAbsolute
@@ -373,6 +411,7 @@ namespace MatrixMulti
 
         public static double[,] axisToAxis(double[,] P, double theta, double d, double a, double alpha)
         {
+            // => ROBOT
             double[,] result = new double[4, 4];
 
             double[,] rotTheta = Matrix.getRotationMatrix(RotationAxis.Z, theta);
@@ -390,6 +429,7 @@ namespace MatrixMulti
 
         public static double[] getOrientationEuler(double[,] P)
         {
+            // => ROBOT
             double[] result = new double[3];
 
             double A = Math.Atan2(P[1, 0], P[0, 0]) * 180 / Math.PI;
@@ -596,12 +636,9 @@ namespace MatrixMulti
 
 
 
-            Robot Robert = new Robot("KUKA", "KR210 R2700 EXTRA");
+            Robot Robert = new Robot(pos_1, d, r, alpha, rangeAxis );
 
-            Robert.DHParameter_Pos2Theta = pos_1;
-            Robert.DHParameter_d = d;
-            Robert.DHParameter_a = r;
-            Robert.DHParameter_alpha = alpha;
+
 
             // Theta: (Gelenkwinkel) Rotation um z(n-1) Achse, damit x(n-1) parallel zu xn Achse liegt
             // d: Translation (Gelenkabstand) entlang z(n-1) Achse bis auf den Punkt wo sich z(n-1) und xn schneiden
